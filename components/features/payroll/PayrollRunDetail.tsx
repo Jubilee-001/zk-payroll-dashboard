@@ -33,6 +33,11 @@ import {
 } from "@/lib/payroll/scheduleUtils";
 import ReconciliationDiffPanel from "@/components/features/payroll/ReconciliationDiffPanel";
 import CancelPayrollDialog from "./CancelPayrollDialog";
+import { PayrollSubmissionStepper } from "@/components/stepper/PayrollSubmissionStepper";
+import { MissingProofWarning, ExpiredProofWarning } from "@/components/features/proofs/MissingProofWarning";
+import { ApprovalExpiryBadge } from "@/components/signing/ApprovalExpiryBadge";
+import BatchRootComparison from "@/components/features/reconciliation/BatchRootComparison";
+import PayrollCancellationPanel from "./PayrollCancellationPanel";
 
 
 
@@ -210,6 +215,10 @@ export default function PayrollRunDetail({ run: propRun, proofReference }: Payro
         </button>
       </div>
 
+      {/* Submission progress stepper (issue #295): lifecycle stages derived
+          from run state only — no amounts, proofs, or hashes rendered. */}
+      <PayrollSubmissionStepper input={{ source: "run", run }} compact />
+
       {lockState && (
         <div
           role="alert"
@@ -277,7 +286,25 @@ export default function PayrollRunDetail({ run: propRun, proofReference }: Payro
             </div>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            {kind === "scheduled" && !lockState && !freshness.blocksExecution && (
+            {kind === "scheduled" && lockState !== "cancellation" && freshness.state === "missing" && (
+              <span
+                data-testid="execution-blocked-missing-proof"
+                role="alert"
+                className="inline-flex items-center justify-center px-4 py-2 rounded-md bg-gray-100 text-gray-500 text-sm font-medium cursor-not-allowed"
+              >
+                Execution blocked — proof missing
+              </span>
+            )}
+            {kind === "scheduled" && lockState !== "cancellation" && freshness.state === "expired" && (
+              <span
+                data-testid="execution-blocked-by-proof"
+                role="alert"
+                className="inline-flex items-center justify-center px-4 py-2 rounded-md bg-gray-100 text-gray-500 text-sm font-medium cursor-not-allowed"
+              >
+                Execution blocked — proof expired
+              </span>
+            )}
+            {kind === "scheduled" && !lockState && !freshness.blocksExecution && freshness.state !== "missing" && (
               <Link
                 href="/payroll/execute"
                 className="inline-flex items-center justify-center px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition-colors"
