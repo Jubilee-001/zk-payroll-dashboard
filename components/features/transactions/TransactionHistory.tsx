@@ -35,12 +35,11 @@ import {
 } from "lucide-react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { MOCK_TRANSACTIONS, MOCK_EMPLOYEES } from "@/lib/api/mockData";
-import type { PayrollTransaction, PayrollRun } from "@/types";
+import type { PayrollTransaction } from "@/types";
 import TransactionDetailDrawer from "./TransactionDetailDrawer";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import StatusBadge from "@/components/ui/StatusBadge";
 import { PayrollLockIndicator } from "@/components/ui/PayrollLockIndicator";
-import { SubmissionProgressCell } from "@/components/stepper/SubmissionProgressCell";
 
 type StatusFilter = "all" | "verified" | "pending" | "failed" | "cancelled";
 
@@ -785,12 +784,6 @@ function TransactionHistoryInner({
                     scope="col"
                     className="px-6 py-3 text-xs font-medium text-gray-400 uppercase"
                   >
-                    Progress
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-xs font-medium text-gray-400 uppercase"
-                  >
                     Date
                   </th>
                   <th
@@ -815,9 +808,6 @@ function TransactionHistoryInner({
                     </td>
                     <td className="px-6 py-4">
                       <div className="h-6 bg-gray-200 rounded-full w-14"></div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="h-2 bg-gray-200 rounded-full w-16"></div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="h-4 bg-gray-200 rounded w-24"></div>
@@ -937,12 +927,6 @@ function TransactionHistoryInner({
                     scope="col"
                     className="px-6 py-3 text-xs font-medium text-gray-600 uppercase"
                   >
-                    Progress
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-xs font-medium text-gray-600 uppercase"
-                  >
                     Date
                   </th>
                   <th
@@ -957,7 +941,7 @@ function TransactionHistoryInner({
                 {filtered.length === 0 ? (
                   <tr>
                     <td
-                      colSpan={7}
+                      colSpan={6}
                       className="px-6 py-8 text-center text-sm text-gray-500"
                     >
                       {hasFiltersApplied
@@ -1001,13 +985,6 @@ function TransactionHistoryInner({
                             />
                           </div>
                         )}
-                      </td>
-                      {/* Issue #295: compact lifecycle progress — state only,
-                          no amounts, proofs, or hashes rendered here. */}
-                      <td className="px-6 py-4">
-                        <SubmissionProgressCell
-                          input={{ source: "run", run: tx as PayrollRun }}
-                        />
                       </td>
                       <td className="px-6 py-4 text-gray-600">
                         <div className="font-medium text-gray-900">{formatPeriodLabel(tx)}</div>

@@ -38,8 +38,6 @@ import ApprovalHistoryDrawer from "./ApprovalHistoryDrawer";
 import { PayrollRiskWarnings } from "./PayrollRiskWarnings";
 import { NoteHashPreview } from "@/components/payroll/NoteHashPreview";
 import { WalletReconnectRecoveryBanner } from "@/components/features/wallet/WalletReconnectRecoveryBanner";
-import { PayrollSubmissionStepper } from "@/components/stepper/PayrollSubmissionStepper";
-import type { SubmissionStageKey } from "@/src/payroll/submissionProgress";
 import { useEnvironmentStore } from "@/stores/environment";
 import { ContractErrorHelpButton } from "@/components/features/errors/ContractErrorDrawer";
 import { MissingProofWarning } from "@/components/features/proofs/MissingProofWarning";
@@ -342,14 +340,6 @@ function PayrollWizard() {
 
   const idx = stepIndex(currentStep);
 
-  // Issue #295: progress stepper for the six submission lifecycle stages.
-  // Derives stage states from wizard state only — no payroll values flow in.
-  const stepperFailedStage: SubmissionStageKey | null = useMemo(() => {
-    if (currentStep === "proof" && proofStatus === "error") return "validation";
-    if (submissionStatus === "error") return "submission";
-    return null;
-  }, [currentStep, proofStatus, submissionStatus]);
-
   return (
     <section aria-labelledby="payroll-wizard-heading" className="space-y-6">
       <div className="flex items-center justify-between">
@@ -451,19 +441,6 @@ function PayrollWizard() {
           </button>
         </div>
       )}
-
-      {/* Submission progress stepper (issue #295): lifecycle stages across
-          validation, approval, signing, submission, confirmation, and
-          reconciliation. State-only — renders no payroll values. */}
-      <PayrollSubmissionStepper
-        input={{
-          source: "wizard",
-          currentStep,
-          proofStatus,
-          submissionStatus,
-          failedStage: stepperFailedStage,
-        }}
-      />
 
       <nav
         aria-label="Payroll execution progress"
