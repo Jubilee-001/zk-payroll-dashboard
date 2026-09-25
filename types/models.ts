@@ -2,6 +2,22 @@ import type { StellarNetwork } from "./stellar";
 
 export type OnboardingStatus = "not_started" | "in_progress" | "completed";
 
+// ─── Employee Lifecycle Management (#454) ────────────────────────────────────
+
+export type EmployeeLifecycleStatus =
+  | "active"
+  | "suspended"
+  | "offboarded";
+
+export interface EmployeeLifecycleEvent {
+  id: string;
+  employeeId: string;
+  action: "activate" | "suspend" | "offboard";
+  performedBy: string;
+  performedAt: string;
+  note?: string;
+}
+
 export interface Employee {
   id: string;
   address: string;
@@ -18,6 +34,12 @@ export interface Employee {
   lastOnboardingAttemptAt?: string | null;
   startDate: string;
   lastPayment?: string;
+  /** Lifecycle management status — complements `isActive` / `status`. */
+  lifecycleStatus?: EmployeeLifecycleStatus;
+  suspendedAt?: string | null;
+  offboardedAt?: string | null;
+  /** Privacy-safe reason for the most recent lifecycle transition. */
+  lifecycleNote?: string | null;
 }
 
 export interface Company {
@@ -117,6 +139,25 @@ export interface PayrollTransaction {
   }>;
   txHash?: string;
   isArchived?: boolean;
+  /**
+   * Reconciliation outcome for run-derived history rows (#284). Absent when
+   * the transaction has not been reconciled yet; the quick-filter toolbar
+   * treats a missing value as "does not match a specific reconciliation
+   * filter" rather than guessing. Mirrors `PayrollRun["reconciliationStatus"]`.
+   */
+  reconciliationStatus?: "pending" | "partial" | "complete" | "failed";
+  /**
+   * Cancellation reason for run-derived history rows (#284). Mirrors
+   * `PayrollRun["cancellationReason"]`.
+   */
+  cancellationReason?:
+    | "treasury_insufficient"
+    | "approval_rejected"
+    | "compliance_hold"
+    | "duplicate_batch"
+    | "manual_request"
+    | "expired_proof"
+    | "unknown";
 }
 
 export type PayrollCancellationReason =
@@ -232,6 +273,8 @@ export interface AuditAccessRequest {
   requesterEmail: string;
   scope: "read-only" | "full-audit";
   rationale: string;
+  reviewerNotes?: string;
+  requestedExpiresAt?: string;
   status:
     | "pending"
     | "approved"

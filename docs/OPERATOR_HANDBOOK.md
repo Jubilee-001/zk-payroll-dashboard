@@ -254,11 +254,20 @@ After bulk import:
 4. Add reason for change
 5. Confirm update
 
-**Use Cases:**
+#### Employee Lifecycle Management Screen
 
-- Offboarding multiple employees
-- Seasonal workforce changes
-- Department reorganizations
+For dedicated administrative control over employee lifecycle transitions:
+
+1. Navigate to **Employees** → **Lifecycle** (`/employees/lifecycle`)
+2. Review current employee statuses (Active, Suspended, Offboarded)
+3. Filter by lifecycle status or search by name, department, or email
+4. Perform state transitions with full confirmation:
+   - **Suspend**: Temporarily exclude an active employee from payroll (e.g., sabbatical, compliance hold). Can be reactivated later.
+   - **Activate**: Reactivate a suspended employee when ready to resume payroll disbursements.
+   - **Offboard**: Permanently offboard an employee (terminal state; cannot be reactivated directly).
+5. All actions include an optional administrative note and append to the privacy-safe audit trail.
+
+See [Employee Lifecycle Management Guide](EMPLOYEE_LIFECYCLE.md) for full details.
 
 ---
 
@@ -268,10 +277,19 @@ After bulk import:
 
 1. Go to **History** page
 2. Review list of past payroll runs
-3. Use filters to narrow results:
+3. Use the **quick filters** toolbar above the table for one-click narrowing:
+   - Status (verified / pending / failed / cancelled)
+   - Approval state (draft, awaiting approval, approved, rejected, correction requested)
+   - Risk state (clear / caution / warning / block)
+   - Treasury readiness (funded / underfunded / not yet verified)
+   - Reconciliation outcome (complete / partial / pending / failed)
+4. For finer control, open the **Filters** panel:
    - Date range
    - Status
    - Employee count
+5. Click **Clear quick filters** in the toolbar (or **Clear all** in the filter panel) to reset.
+
+Quick-filter chips show a count of matching runs and update as other filters narrow the list. They describe lifecycle state only — amounts, employee identities, wallet addresses, and proofs are never displayed in the toolbar.
 
 ### Payroll Run Details
 

@@ -45,6 +45,7 @@ exports[`Visual Regression - Payroll Exception States > captures payroll executi
       </button>
     </div>
     <nav
+      aria-busy="false"
       aria-label="Payroll execution progress"
       class="flex items-center"
     >
@@ -4585,6 +4586,7 @@ exports[`Visual Regression - Payroll Flow States > Payroll Wizard - Initial Stat
       </button>
     </div>
     <nav
+      aria-busy="false"
       aria-label="Payroll execution progress"
       class="flex items-center"
     >

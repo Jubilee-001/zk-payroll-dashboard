@@ -157,6 +157,9 @@ Use this checklist to confirm the dashboard is wired correctly:
 - [ ] `/history` shows transaction history table
 - [ ] Filters panel can be opened/closed
 - [ ] Status, employee, date range, and payroll run filters work
+- [ ] Quick filters toolbar shows Status, Approval, Risk, Treasury, and Reconciliation chip groups
+- [ ] Clicking a quick filter chip narrows the list and shows a match count; clicking it again clears that group
+- [ ] "Clear quick filters" resets the toolbar; combined counts appear in the header filter badge
 - [ ] CSV export downloads a file with filtered results
 - [ ] "No transactions match the current filters" appears when no results
 

@@ -52,6 +52,19 @@ const initialFilters: Filters = {
   outcome: "all",
 };
 
+function generateViewId(): string {
+  if (
+    typeof crypto !== "undefined" &&
+    typeof crypto.randomUUID === "function"
+  ) {
+    return `payroll-view-${crypto.randomUUID()}`;
+  }
+
+  return `payroll-view-${Date.now()}-${Math.random()
+    .toString(36)
+    .slice(2, 10)}`;
+}
+
 function PayrollHistory({ runs = MOCK_PAYROLL_RUNS }: PayrollHistoryProps) {
   const [filters, setFilters] = useState<Filters>(initialFilters);
   const [sortField, setSortField] = useState<SortField>("createdAt");
@@ -150,7 +163,7 @@ function PayrollHistory({ runs = MOCK_PAYROLL_RUNS }: PayrollHistoryProps) {
     setSavedViews((previous) => [
       ...previous,
       {
-        id: `payroll-view-${Date.now()}`,
+        id: generateViewId(),
         name,
         filters: { ...filters },
         sortField,
@@ -172,19 +185,25 @@ function PayrollHistory({ runs = MOCK_PAYROLL_RUNS }: PayrollHistoryProps) {
 
   const handleFinishRename = (id: string) => {
     const name = renameValue.trim();
+    if (!name) {
+      setSaveError("Enter a name for this view.");
+      return;
+    }
     if (
-      !name ||
       savedViews.some(
         (view) =>
           view.id !== id && view.name.toLowerCase() === name.toLowerCase(),
       )
-    )
+    ) {
+      setSaveError("A saved view with this name already exists.");
       return;
+    }
     setSavedViews((previous) =>
       previous.map((view) => (view.id === id ? { ...view, name } : view)),
     );
     setEditingViewId(null);
     setRenameValue("");
+    setSaveError("");
   };
 
   return (
@@ -226,16 +245,21 @@ function PayrollHistory({ runs = MOCK_PAYROLL_RUNS }: PayrollHistoryProps) {
                     className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 group"
                   >
                     {editingViewId === view.id ? (
-                      <div className="flex items-center gap-1 flex-1">
+                      <div className="relative flex items-center gap-1 flex-1">
                         <input
                           value={renameValue}
-                          onChange={(event) =>
-                            setRenameValue(event.target.value)
-                          }
+                          onChange={(event) => {
+                            setRenameValue(event.target.value);
+                            setSaveError("");
+                          }}
                           onKeyDown={(event) => {
                             if (event.key === "Enter")
                               handleFinishRename(view.id);
-                            if (event.key === "Escape") setEditingViewId(null);
+                            if (event.key === "Escape") {
+                              setEditingViewId(null);
+                              setRenameValue("");
+                              setSaveError("");
+                            }
                           }}
                           aria-label={`Rename ${view.name}`}
                           className="flex-1 min-w-0 rounded border border-gray-300 px-2 py-1 text-sm"
@@ -248,6 +272,11 @@ function PayrollHistory({ runs = MOCK_PAYROLL_RUNS }: PayrollHistoryProps) {
                         >
                           <Check className="w-3.5 h-3.5" />
                         </button>
+                        {saveError && (
+                          <p role="alert" className="absolute left-0 top-full mt-1 text-xs text-red-700">
+                            {saveError}
+                          </p>
+                        )}
                       </div>
                     ) : (
                       <button

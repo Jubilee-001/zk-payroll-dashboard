@@ -61,6 +61,34 @@ describe("PayrollHistory", () => {
     );
   });
 
+  it("rejects duplicate names when renaming a saved view", () => {
+    window.localStorage.clear();
+    render(<PayrollHistory runs={MOCK_PAYROLL_RUNS} />);
+
+    fireEvent.click(screen.getByRole("button", { name: /save view/i }));
+    fireEvent.change(screen.getByLabelText("View name"), {
+      target: { value: "Alpha" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /^save$/i }));
+
+    fireEvent.click(screen.getByRole("button", { name: /save view/i }));
+    fireEvent.change(screen.getByLabelText("View name"), {
+      target: { value: "Beta" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /^save$/i }));
+
+    fireEvent.click(screen.getByRole("button", { name: /saved views/i }));
+    fireEvent.click(screen.getByRole("button", { name: /rename beta/i }));
+
+    const renameInput = screen.getByRole("textbox", { name: /rename beta/i });
+    fireEvent.change(renameInput, { target: { value: "Alpha" } });
+    fireEvent.click(screen.getByRole("button", { name: /save view name/i }));
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "A saved view with this name already exists.",
+    );
+  });
+
   it("shows the filter panel when the filter button is clicked", () => {
     render(<PayrollHistory runs={MOCK_PAYROLL_RUNS} />);
 
