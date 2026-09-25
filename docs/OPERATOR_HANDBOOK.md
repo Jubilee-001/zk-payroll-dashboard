@@ -268,10 +268,19 @@ After bulk import:
 
 1. Go to **History** page
 2. Review list of past payroll runs
-3. Use filters to narrow results:
+3. Use the **quick filters** toolbar above the table for one-click narrowing:
+   - Status (verified / pending / failed / cancelled)
+   - Approval state (draft, awaiting approval, approved, rejected, correction requested)
+   - Risk state (clear / caution / warning / block)
+   - Treasury readiness (funded / underfunded / not yet verified)
+   - Reconciliation outcome (complete / partial / pending / failed)
+4. For finer control, open the **Filters** panel:
    - Date range
    - Status
    - Employee count
+5. Click **Clear quick filters** in the toolbar (or **Clear all** in the filter panel) to reset.
+
+Quick-filter chips show a count of matching runs and update as other filters narrow the list. They describe lifecycle state only — amounts, employee identities, wallet addresses, and proofs are never displayed in the toolbar.
 
 ### Payroll Run Details
 

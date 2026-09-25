@@ -11,6 +11,14 @@ import {
 import { searchPayrollRuns } from "@/lib/payrollSearch";
 import { formatPeriodLabel } from "@/lib/date/periodLabel";
 import {
+  EMPTY_QUICK_FILTERS,
+  applyQuickFilters,
+  computeQuickFilterCounts,
+  countActiveQuickFilters,
+} from "@/src/payroll/quickFilters";
+import type { QuickFilterSelection } from "@/src/payroll/quickFilters";
+import PayrollQuickFilters from "@/components/filters/PayrollQuickFilters";
+import {
   ArrowUpRight,
   ArrowDownLeft,
   Download,
@@ -63,6 +71,8 @@ interface Filters {
   dateFrom: string;
   dateTo: string;
   payrollRun: string;
+  /** #284 one-click quick filters, applied after the fields above. */
+  quick: QuickFilterSelection;
 }
 
 interface SavedView {
@@ -79,6 +89,7 @@ const initialFilters: Filters = {
   dateFrom: "",
   dateTo: "",
   payrollRun: "",
+  quick: { ...EMPTY_QUICK_FILTERS },
 };
 
 function generateViewId(): string {
@@ -217,7 +228,7 @@ function TransactionHistoryInner({
   const [editingViewId, setEditingViewId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState("");
 
-  const filtered = useMemo(() => {
+  const filteredBase = useMemo(() => {
     let results = MOCK_TRANSACTIONS.filter((t) =>
       mode === "archived" ? t.isArchived : !t.isArchived,
     );
@@ -257,20 +268,41 @@ function TransactionHistoryInner({
     return results;
   }, [filters, mode]);
 
-  const activeFilterCount = [
-    !!filters.search.trim(),
-    filters.status !== "all",
-    !!filters.employee,
-    !!filters.dateFrom,
-    !!filters.dateTo,
-    !!filters.payrollRun,
-  ].filter(Boolean).length;
+  // #284: quick filters apply on top of the search/panel result so their
+  // faceted counts describe the list the user is actually looking at.
+  const filtered = useMemo(
+    () => applyQuickFilters(filteredBase, filters.quick),
+    [filteredBase, filters.quick],
+  );
+
+  const activeFilterCount =
+    [
+      !!filters.search.trim(),
+      filters.status !== "all",
+      !!filters.employee,
+      !!filters.dateFrom,
+      !!filters.dateTo,
+      !!filters.payrollRun,
+    ].filter(Boolean).length + countActiveQuickFilters(filters.quick);
 
   const handleExport = () => {
     const csv = exportToCsv(filtered);
     const date = new Date().toISOString().slice(0, 10);
     downloadCsv(csv, `payroll-history-${date}.csv`);
   };
+
+  const poolSize = useMemo(
+    () =>
+      MOCK_TRANSACTIONS.filter((t) =>
+        mode === "archived" ? t.isArchived : !t.isArchived,
+      ).length,
+    [mode],
+  );
+
+  const quickFilterCounts = useMemo(
+    () => computeQuickFilterCounts(filteredBase, filters.quick),
+    [filteredBase, filters.quick],
+  );
 
   const clearFilters = () => setFilters(initialFilters);
 
@@ -290,7 +322,13 @@ function TransactionHistoryInner({
   }, [savingName, filters, savedViews.length, setSavedViews]);
 
   const handleApplyView = useCallback((view: SavedView) => {
-    setFilters({ ...view.filters });
+    setFilters((prev) => ({
+      ...initialFilters,
+      ...view.filters,
+      // Views saved before #284 have no quick-filter selection — treat as
+      // "no quick filters" instead of letting undefined crash the toolbar.
+      quick: view.filters.quick ?? { ...EMPTY_QUICK_FILTERS, ...prev.quick },
+    }));
     setShowSavedViews(false);
   }, []);
 
@@ -627,6 +665,15 @@ function TransactionHistoryInner({
             </div>
           </div>
         )}
+
+        {/* ── #284 Quick filters toolbar ──────────────────────────── */}
+        <PayrollQuickFilters
+          selection={filters.quick}
+          counts={quickFilterCounts}
+          totalCount={poolSize}
+          filteredCount={filtered.length}
+          onChange={(quick) => setFilters((f) => ({ ...f, quick }))}
+        />
 
         {/* ── Active filter bar with save button ──────────────────── */}
         {hasFiltersApplied && (
@@ -974,14 +1021,9 @@ function TransactionHistoryInner({
             </table>
 
             <div className="px-4 sm:px-6 py-3 border-t text-xs text-gray-500">
-              {(() => {
-                const poolSize = MOCK_TRANSACTIONS.filter((t) =>
-                  mode === "archived" ? t.isArchived : !t.isArchived,
-                ).length;
-                return `Showing ${filtered.length} of ${poolSize} ${
-                  mode === "archived" ? "archived payrolls" : "transactions"
-                }`;
-              })()}
+              {`Showing ${filtered.length} of ${poolSize} ${
+                mode === "archived" ? "archived payrolls" : "transactions"
+              }`}
             </div>
           </>
         )}
