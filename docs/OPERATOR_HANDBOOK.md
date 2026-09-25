@@ -190,6 +190,37 @@ The system will automatically:
 3. Review payroll run detail page
 4. Verify status shows "Verified"
 
+### Submission Progress Stepper
+
+A progress stepper above the payroll wizard shows the six lifecycle stages of
+a payroll submission:
+
+1. **Validation** — run data, treasury, and proof checks
+2. **Approval** — executive sign-off on the run
+3. **Signing** — wallet signature on the batch transaction
+4. **Submission** — transaction broadcast to the network
+5. **Confirmation** — on-chain inclusion verified
+6. **Reconciliation** — payouts matched against the run
+
+Each stage is one of: **In progress** (spinning marker), **Complete** (green
+check), **Pending** (hollow marker), **Failed** (red marker), or **Skipped**
+(gray marker, cancelled runs only).
+
+**Reading the stepper:**
+
+- The active stage tells you where the run currently is. If a stage shows
+  **Failed**, fix the underlying issue and use the retry action on that step;
+  later stages stay pending until the failed stage succeeds.
+- A **Skipped** stage means the run was cancelled at that point (for example,
+  a treasury shortfall skips at Validation; an approval rejection skips at
+  Approval). The run detail page shows the cancellation reason.
+- The same stepper appears on the payroll run detail page for historical and
+  in-flight runs, so you can answer "where is this payroll?" without opening
+  the wizard.
+
+**Privacy note:** The stepper displays lifecycle state only. It never shows
+amounts, employee data, wallet addresses, proofs, or transaction hashes.
+
 ---
 
 ## Employee Management
@@ -277,17 +308,18 @@ See [Employee Lifecycle Management Guide](EMPLOYEE_LIFECYCLE.md) for full detail
 
 1. Go to **History** page
 2. Review list of past payroll runs
-3. Use the **quick filters** toolbar above the table for one-click narrowing:
+3. Read the **Progress** column to see where each run is in the submission lifecycle — six state dots (validation, approval, signing, submission, confirmation, reconciliation) with a hover tooltip summarizing the current stage (state labels only; no amounts or identifiers)
+4. Use the **quick filters** toolbar above the table for one-click narrowing:
    - Status (verified / pending / failed / cancelled)
    - Approval state (draft, awaiting approval, approved, rejected, correction requested)
    - Risk state (clear / caution / warning / block)
    - Treasury readiness (funded / underfunded / not yet verified)
    - Reconciliation outcome (complete / partial / pending / failed)
-4. For finer control, open the **Filters** panel:
+5. For finer control, open the **Filters** panel:
    - Date range
    - Status
    - Employee count
-5. Click **Clear quick filters** in the toolbar (or **Clear all** in the filter panel) to reset.
+6. Click **Clear quick filters** in the toolbar (or **Clear all** in the filter panel) to reset.
 
 Quick-filter chips show a count of matching runs and update as other filters narrow the list. They describe lifecycle state only — amounts, employee identities, wallet addresses, and proofs are never displayed in the toolbar.
 
