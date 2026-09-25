@@ -289,7 +289,7 @@ See [Employee Lifecycle Management Guide](EMPLOYEE_LIFECYCLE.md) for full detail
    - Employee count
 5. Click **Clear quick filters** in the toolbar (or **Clear all** in the filter panel) to reset.
 
-Quick-filter chips show a count of matching runs and update as other filters narrow the list. They describe lifecycle state only — amounts, employee identities, wallet addresses, and proofs are never displayed in the toolbar.
+Quick-filter chips show a count from the currently searched and panel-filtered list, so the counts stay useful when filters are combined. If no run matches, the toolbar explains that filters can be removed. Saved views created before quick filters were introduced open with no quick filters selected. The toolbar describes lifecycle state only — amounts, employee identities, wallet addresses, and proofs are never displayed.
 
 ### Payroll Run Details
 
