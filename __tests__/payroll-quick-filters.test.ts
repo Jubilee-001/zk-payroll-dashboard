@@ -6,6 +6,7 @@ import {
   countActiveQuickFilters,
   deriveHistoryRiskLevel,
   deriveTreasuryFacet,
+  formatQuickFilterSummary,
   getRunQuickFacets,
   isQuickFilterEmpty,
   runMatchesQuickFilters,
@@ -139,6 +140,24 @@ describe("toggleQuickFilter", () => {
     expect(both.status).toBe("failed");
     expect(both.treasury).toBe("funded");
     expect(countActiveQuickFilters(both)).toBe(2);
+  });
+});
+
+describe("formatQuickFilterSummary", () => {
+  it("uses singular wording for one result and one filter", () => {
+    expect(formatQuickFilterSummary(1, 1, 1)).toBe(
+      "1 of 1 run matches 1 quick filter",
+    );
+  });
+
+  it("uses plural wording for multiple results and filters", () => {
+    expect(formatQuickFilterSummary(3, 2, 2)).toBe(
+      "2 of 3 runs match 2 quick filters",
+    );
+  });
+
+  it("summarizes an unfiltered result set", () => {
+    expect(formatQuickFilterSummary(3, 3, 0)).toBe("All 3 runs listed");
   });
 });
 

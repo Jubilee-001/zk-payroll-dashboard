@@ -327,8 +327,9 @@ function TransactionHistoryInner({
       ...initialFilters,
       ...view.filters,
       // Views saved before #284 have no quick-filter selection — treat as
-      // "no quick filters" instead of letting undefined crash the toolbar.
-      quick: view.filters.quick ?? { ...EMPTY_QUICK_FILTERS, ...prev.quick },
+      // "no quick filters" instead of carrying the current selection into
+      // the restored view.
+      quick: view.filters.quick ?? { ...EMPTY_QUICK_FILTERS },
     }));
     setShowSavedViews(false);
   }, []);
@@ -671,7 +672,7 @@ function TransactionHistoryInner({
         <PayrollQuickFilters
           selection={filters.quick}
           counts={quickFilterCounts}
-          totalCount={poolSize}
+          totalCount={filteredBase.length}
           filteredCount={filtered.length}
           onChange={(quick) => setFilters((f) => ({ ...f, quick }))}
         />

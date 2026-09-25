@@ -25,7 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Chip groups for status, approval state, risk state, treasury readiness, and reconciliation outcome
   - Faceted counts on each chip update as other filters narrow the list
   - Toggle semantics (re-click to clear a group) plus a single "Clear quick filters" action
-  - Quick filters compose with the existing search, filter panel, and saved views; counts stack in the header filter badge
+  - Quick filters compose with the existing search, filter panel, and saved views; counts are scoped to the narrowed list and stack in the header filter badge
+  - Legacy saved views reset quick filters instead of inheriting the current selection; result summaries use accessible polite announcements
   - Derived risk and treasury facets are computed from run state only — no salary, employee, wallet, or proof data is surfaced
 
 - **New modules**:
@@ -40,8 +41,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Testing
 
-- `__tests__/payroll-quick-filters.test.ts`: 21 unit tests for derivation, matching, toggle immutability, and faceted counts
-- `__tests__/payroll-quick-filters-toolbar.test.tsx`: 10 component/integration tests covering chip toggling, counts, empty-result guidance, clear-all, archived mode, and a privacy assertion that the toolbar never renders amounts, hashes, proofs, or employee data
+- `__tests__/payroll-quick-filters.test.ts`: 24 unit tests for derivation, matching, summary grammar, toggle immutability, and faceted counts
+- `__tests__/payroll-quick-filters-toolbar.test.tsx`: 11 component/integration tests covering chip toggling, scoped counts, empty-result guidance, clear-all, archived mode, live announcements, and a privacy assertion that the toolbar never renders amounts, hashes, proofs, or employee data
+- `__tests__/transaction-history.test.tsx`: Legacy saved-view compatibility coverage confirms quick filters reset when older views are applied
 
 ### Transaction Detail Drawer (previously tracked under [Unreleased])
 

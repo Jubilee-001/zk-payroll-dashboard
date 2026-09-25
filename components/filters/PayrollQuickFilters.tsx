@@ -22,6 +22,7 @@ import {
   EMPTY_QUICK_FILTERS,
   QUICK_FILTER_GROUPS,
   countActiveQuickFilters,
+  formatQuickFilterSummary,
   isQuickFilterEmpty,
   toggleQuickFilter,
 } from "@/src/payroll/quickFilters";
@@ -225,14 +226,10 @@ export function PayrollQuickFilters({
 
   // Worded to avoid "Showing …" — the table footer already uses that phrase
   // and several tests target it with a broad /showing/i text query.
-  const summary = useMemo(() => {
-    if (isEmpty) {
-      return `All ${totalCount} run${totalCount === 1 ? "" : "s"} listed`;
-    }
-    return `${filteredCount} of ${totalCount} run${
-      totalCount === 1 ? "" : "s"
-    } match ${activeCount} quick filter${activeCount === 1 ? "" : "s"}`;
-  }, [isEmpty, totalCount, filteredCount, activeCount]);
+  const summary = useMemo(
+    () => formatQuickFilterSummary(totalCount, filteredCount, activeCount),
+    [totalCount, filteredCount, activeCount],
+  );
 
   return (
     <section
@@ -286,7 +283,7 @@ export function PayrollQuickFilters({
       </div>
 
       <div className="mt-3 flex items-center justify-between gap-2 border-t border-gray-200 pt-2">
-        <p className="text-xs text-gray-600" role="status">
+        <p className="text-xs text-gray-600" role="status" aria-live="polite">
           {summary}
           {filteredCount === 0 && !isEmpty && (
             <span className="ml-1 text-gray-500">

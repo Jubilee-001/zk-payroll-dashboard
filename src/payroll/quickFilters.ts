@@ -178,6 +178,22 @@ export function countActiveQuickFilters(selection: QuickFilterSelection): number
     .length;
 }
 
+/** Format the state-only result summary used by the quick-filter toolbar. */
+export function formatQuickFilterSummary(
+  totalCount: number,
+  filteredCount: number,
+  activeCount: number,
+): string {
+  if (activeCount === 0) {
+    return `All ${totalCount} run${totalCount === 1 ? "" : "s"} listed`;
+  }
+  return `${filteredCount} of ${totalCount} run${
+    totalCount === 1 ? "" : "s"
+  } ${filteredCount === 1 ? "matches" : "match"} ${activeCount} quick filter${
+    activeCount === 1 ? "" : "s"
+  }`;
+}
+
 /**
  * Toggle a quick filter within a group (radio semantics): selecting the
  * already-active value resets that group to `"all"`.

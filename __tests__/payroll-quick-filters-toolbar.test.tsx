@@ -45,6 +45,9 @@ describe("<PayrollQuickFilters /> (unit)", () => {
     expect(
       screen.getByRole("group", { name: "Filter by reconciliation outcome" }),
     ).toBeInTheDocument();
+    expect(
+      within(screen.getByTestId("payroll-quick-filters")).getByRole("status"),
+    ).toHaveAttribute("aria-live", "polite");
   });
 
   it("announces all runs when nothing is selected", () => {
@@ -70,7 +73,7 @@ describe("<PayrollQuickFilters /> (unit)", () => {
       within(statusGroup).getByRole("checkbox", { name: /Pending/ }),
     ).toBeChecked();
     expect(screen.getByRole("status")).toHaveTextContent(
-      /1 of 3 runs match 1 quick filter/,
+      /1 of 3 runs matches 1 quick filter/,
     );
   });
 });
@@ -101,6 +104,34 @@ describe("TransactionHistory quick filters integration", () => {
     fireEvent.click(within(statusGroup).getByRole("checkbox", { name: /Pending/ }));
 
     expect(screen.getByText(/Showing 1 of 3 transactions/)).toBeInTheDocument();
+  });
+
+  it("scopes the quick-filter summary to existing panel filters", () => {
+    render(<TransactionHistory />);
+
+    fireEvent.click(screen.getByRole("button", { name: /^filters/i }));
+    fireEvent.change(screen.getByRole("combobox", { name: /^status$/i }), {
+      target: { value: "pending" },
+    });
+
+    expect(
+      within(screen.getByTestId("payroll-quick-filters")).getByRole("status"),
+    ).toHaveTextContent(/All 1 run listed/);
+    expect(
+      within(screen.getByRole("group", { name: "Filter by payroll status" })).getByRole(
+        "checkbox",
+        { name: /Pending \(1 run\)/ },
+      ),
+    ).toBeInTheDocument();
+
+    const statusGroup = screen.getByRole("group", {
+      name: "Filter by payroll status",
+    });
+    fireEvent.click(within(statusGroup).getByRole("checkbox", { name: /Pending/ }));
+
+    expect(
+      within(screen.getByTestId("payroll-quick-filters")).getByRole("status"),
+    ).toHaveTextContent(/1 of 1 run matches 1 quick filter/);
   });
 
   it("adds quick filters to the header filter count alongside panel filters", () => {
