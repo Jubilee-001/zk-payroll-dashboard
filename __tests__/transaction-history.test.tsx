@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, within } from "@testing-library/react";
 import TransactionHistory from "@/components/features/transactions/TransactionHistory";
 
 // Mock window.print
@@ -120,6 +120,44 @@ describe("TransactionHistory & Reconciliation Flow", () => {
 
     // dropdown should now show no saved views
     expect(screen.getByText(/no saved views yet/i)).toBeInTheDocument();
+  });
+
+  it("clears quick filters when applying a legacy saved view", () => {
+    window.localStorage.setItem(
+      "zk-payroll-saved-views",
+      JSON.stringify([
+        {
+          id: "legacy-view",
+          name: "Legacy View",
+          filters: {
+            search: "",
+            status: "all",
+            employee: "",
+            dateFrom: "",
+            dateTo: "",
+            payrollRun: "",
+          },
+          createdAt: "2025-01-01T00:00:00.000Z",
+        },
+      ]),
+    );
+
+    render(<TransactionHistory />);
+
+    const statusGroup = screen.getByRole("group", {
+      name: "Filter by payroll status",
+    });
+    fireEvent.click(within(statusGroup).getByRole("checkbox", { name: /Pending/ }));
+    expect(screen.getByText(/Showing 1 of 3 transactions/)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /saved views/i }));
+    const legacyMenuItem = screen.getByRole("menuitem", { name: /legacy view/i });
+    fireEvent.click(within(legacyMenuItem).getByText("Legacy View"));
+
+    expect(screen.getByText(/Showing 3 of 3 transactions/)).toBeInTheDocument();
+    expect(
+      within(screen.getByTestId("payroll-quick-filters")).getByRole("status"),
+    ).toHaveTextContent(/All 3 runs listed/);
   });
 
   it("exports transaction list as a CSV report", async () => {
