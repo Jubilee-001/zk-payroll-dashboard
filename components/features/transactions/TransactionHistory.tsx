@@ -670,7 +670,7 @@ function TransactionHistoryInner({
         <PayrollQuickFilters
           selection={filters.quick}
           counts={quickFilterCounts}
-          totalCount={poolSize}
+          totalCount={filteredBase.length}
           filteredCount={filtered.length}
           onChange={(quick) => setFilters((f) => ({ ...f, quick }))}
         />

@@ -231,7 +231,9 @@ export function PayrollQuickFilters({
     }
     return `${filteredCount} of ${totalCount} run${
       totalCount === 1 ? "" : "s"
-    } match ${activeCount} quick filter${activeCount === 1 ? "" : "s"}`;
+    } ${filteredCount === 1 ? "matches" : "match"} ${activeCount} quick filter${
+      activeCount === 1 ? "" : "s"
+    }`;
   }, [isEmpty, totalCount, filteredCount, activeCount]);
 
   return (
