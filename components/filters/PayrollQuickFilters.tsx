@@ -283,7 +283,7 @@ export function PayrollQuickFilters({
       </div>
 
       <div className="mt-3 flex items-center justify-between gap-2 border-t border-gray-200 pt-2">
-        <p className="text-xs text-gray-600" role="status">
+        <p className="text-xs text-gray-600" role="status" aria-live="polite">
           {summary}
           {filteredCount === 0 && !isEmpty && (
             <span className="ml-1 text-gray-500">

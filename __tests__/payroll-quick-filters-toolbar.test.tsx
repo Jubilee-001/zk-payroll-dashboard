@@ -45,6 +45,9 @@ describe("<PayrollQuickFilters /> (unit)", () => {
     expect(
       screen.getByRole("group", { name: "Filter by reconciliation outcome" }),
     ).toBeInTheDocument();
+    expect(
+      within(screen.getByTestId("payroll-quick-filters")).getByRole("status"),
+    ).toHaveAttribute("aria-live", "polite");
   });
 
   it("announces all runs when nothing is selected", () => {
