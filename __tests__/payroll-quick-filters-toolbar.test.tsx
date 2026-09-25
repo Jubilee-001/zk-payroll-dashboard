@@ -117,6 +117,12 @@ describe("TransactionHistory quick filters integration", () => {
     expect(
       within(screen.getByTestId("payroll-quick-filters")).getByRole("status"),
     ).toHaveTextContent(/All 1 run listed/);
+    expect(
+      within(screen.getByRole("group", { name: "Filter by payroll status" })).getByRole(
+        "checkbox",
+        { name: /Pending \(1 run\)/ },
+      ),
+    ).toBeInTheDocument();
 
     const statusGroup = screen.getByRole("group", {
       name: "Filter by payroll status",
