@@ -1071,6 +1071,8 @@ function TransactionHistoryInner({
                       <td className="px-6 py-4">
                         <ReconciliationStatusBadge
                           status={resolveReconciliationStatus(tx)}
+                        />
+                      </td>
                       {/* Issue #295: compact lifecycle progress — state only,
                           no amounts, proofs, or hashes rendered here. */}
                       <td className="px-6 py-4">
