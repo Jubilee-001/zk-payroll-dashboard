@@ -117,6 +117,25 @@ export interface PayrollTransaction {
   }>;
   txHash?: string;
   isArchived?: boolean;
+  /**
+   * Reconciliation outcome for run-derived history rows (#284). Absent when
+   * the transaction has not been reconciled yet; the quick-filter toolbar
+   * treats a missing value as "does not match a specific reconciliation
+   * filter" rather than guessing. Mirrors `PayrollRun["reconciliationStatus"]`.
+   */
+  reconciliationStatus?: "pending" | "partial" | "complete" | "failed";
+  /**
+   * Cancellation reason for run-derived history rows (#284). Mirrors
+   * `PayrollRun["cancellationReason"]`.
+   */
+  cancellationReason?:
+    | "treasury_insufficient"
+    | "approval_rejected"
+    | "compliance_hold"
+    | "duplicate_batch"
+    | "manual_request"
+    | "expired_proof"
+    | "unknown";
 }
 
 export type PayrollCancellationReason =
