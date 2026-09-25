@@ -160,6 +160,9 @@ Use this checklist to confirm the dashboard is wired correctly:
 - [ ] Quick filters toolbar shows Status, Approval, Risk, Treasury, and Reconciliation chip groups
 - [ ] Clicking a quick filter chip narrows the list and shows a match count; clicking it again clears that group
 - [ ] "Clear quick filters" resets the toolbar; combined counts appear in the header filter badge
+- [ ] Applying a search or panel filter scopes the quick-filter counts to the narrowed list
+- [ ] Applying an older saved view clears any quick filters that were active before the view opened
+- [ ] Quick-filter labels and counts do not expose amounts, employee identifiers, wallet addresses, or hashes
 - [ ] CSV export downloads a file with filtered results
 - [ ] "No transactions match the current filters" appears when no results
 
