@@ -22,6 +22,7 @@ import {
   EMPTY_QUICK_FILTERS,
   QUICK_FILTER_GROUPS,
   countActiveQuickFilters,
+  formatQuickFilterSummary,
   isQuickFilterEmpty,
   toggleQuickFilter,
 } from "@/src/payroll/quickFilters";
@@ -225,16 +226,10 @@ export function PayrollQuickFilters({
 
   // Worded to avoid "Showing …" — the table footer already uses that phrase
   // and several tests target it with a broad /showing/i text query.
-  const summary = useMemo(() => {
-    if (isEmpty) {
-      return `All ${totalCount} run${totalCount === 1 ? "" : "s"} listed`;
-    }
-    return `${filteredCount} of ${totalCount} run${
-      totalCount === 1 ? "" : "s"
-    } ${filteredCount === 1 ? "matches" : "match"} ${activeCount} quick filter${
-      activeCount === 1 ? "" : "s"
-    }`;
-  }, [isEmpty, totalCount, filteredCount, activeCount]);
+  const summary = useMemo(
+    () => formatQuickFilterSummary(totalCount, filteredCount, activeCount),
+    [totalCount, filteredCount, activeCount],
+  );
 
   return (
     <section
